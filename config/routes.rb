@@ -1,6 +1,14 @@
 Rails.application.routes.draw do
   resources :users
-  resources :deliveries
+  resources :deliveries do
+    collection do
+      get :analytics
+    end
+  end
+  
+  # API health check for frontend debugging
+  get 'api/health', to: proc { [200, {'Content-Type' => 'application/json'}, [{ status: 'ok', timestamp: Time.current }.to_json]] }
+  
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

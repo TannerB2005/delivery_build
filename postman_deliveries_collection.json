@@ -1,0 +1,498 @@
+{
+    "info": {
+        "_postman_id": "delivery-viz-001",
+        "name": "Delivery Visualization API",
+        "description": "Comprehensive collection for visualizing delivery data with charts, graphs, and analytics",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http://localhost:3000",
+            "type": "string"
+        }
+    ],
+    "item": [
+        {
+            "name": "📊 Analytics & Visualizations",
+            "item": [
+                {
+                    "name": "Delivery Analytics Dashboard",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "// Parse response",
+                                    "const response = pm.response.json();",
+                                    "",
+                                    "// Create visualization template",
+                                    "const template = `",
+                                    "<div style='font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5;'>",
+                                    "  <h1 style='color: #333; text-align: center; margin-bottom: 30px;'>🚚 Delivery Analytics Dashboard</h1>",
+                                    "  ",
+                                    "  <div style='display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px;'>",
+                                    "    <div style='background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);'>",
+                                    "      <h3 style='color: #2c3e50; margin-top: 0;'>📦 Total Deliveries</h3>",
+                                    "      <p style='font-size: 2em; font-weight: bold; color: #3498db; margin: 0;'>{{total_deliveries}}</p>",
+                                    "    </div>",
+                                    "    <div style='background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);'>",
+                                    "      <h3 style='color: #2c3e50; margin-top: 0;'>⚖️ Total Weight</h3>",
+                                    "      <p style='font-size: 2em; font-weight: bold; color: #e74c3c; margin: 0;'>{{total_weight}} kg</p>",
+                                    "    </div>",
+                                    "    <div style='background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);'>",
+                                    "      <h3 style='color: #2c3e50; margin-top: 0;'>📊 Average Weight</h3>",
+                                    "      <p style='font-size: 2em; font-weight: bold; color: #f39c12; margin: 0;'>{{average_weight}} kg</p>",
+                                    "    </div>",
+                                    "  </div>",
+                                    "",
+                                    "  <div style='display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;'>",
+                                    "    <div style='background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);'>",
+                                    "      <h3 style='color: #2c3e50; margin-top: 0;'>📈 Status Distribution</h3>",
+                                    "      <div>{{status_chart}}</div>",
+                                    "    </div>",
+                                    "    <div style='background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);'>",
+                                    "      <h3 style='color: #2c3e50; margin-top: 0;'>👥 Deliveries by User</h3>",
+                                    "      <div>{{user_chart}}</div>",
+                                    "    </div>",
+                                    "  </div>",
+                                    "",
+                                    "  <div style='background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 20px;'>",
+                                    "    <h3 style='color: #2c3e50; margin-top: 0;'>🎯 Top Destinations</h3>",
+                                    "    <div>{{destinations_chart}}</div>",
+                                    "  </div>",
+                                    "",
+                                    "  <div style='background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);'>",
+                                    "    <h3 style='color: #2c3e50; margin-top: 0;'>📏 Weight Distribution</h3>",
+                                    "    <div style='display: flex; justify-content: space-around;'>",
+                                    "      <div style='text-align: center;'>",
+                                    "        <div style='background: #27ae60; color: white; padding: 15px; border-radius: 50%; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px;'>",
+                                    "          <span style='font-weight: bold;'>{{light_weight}}</span>",
+                                    "        </div>",
+                                    "        <p style='margin: 0; font-weight: bold;'>Light (&lt;10kg)</p>",
+                                    "      </div>",
+                                    "      <div style='text-align: center;'>",
+                                    "        <div style='background: #f39c12; color: white; padding: 15px; border-radius: 50%; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px;'>",
+                                    "          <span style='font-weight: bold;'>{{medium_weight}}</span>",
+                                    "        </div>",
+                                    "        <p style='margin: 0; font-weight: bold;'>Medium (10-50kg)</p>",
+                                    "      </div>",
+                                    "      <div style='text-align: center;'>",
+                                    "        <div style='background: #e74c3c; color: white; padding: 15px; border-radius: 50%; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px;'>",
+                                    "          <span style='font-weight: bold;'>{{heavy_weight}}</span>",
+                                    "        </div>",
+                                    "        <p style='margin: 0; font-weight: bold;'>Heavy (&gt;50kg)</p>",
+                                    "      </div>",
+                                    "    </div>",
+                                    "  </div>",
+                                    "</div>",
+                                    "`;",
+                                    "",
+                                    "// Helper function to create bar chart",
+                                    "function createBarChart(data, colors = ['#3498db', '#e74c3c', '#f39c12', '#27ae60', '#9b59b6']) {",
+                                    "  const maxValue = Math.max(...Object.values(data));",
+                                    "  let chart = '';",
+                                    "  let colorIndex = 0;",
+                                    "  ",
+                                    "  for (const [key, value] of Object.entries(data)) {",
+                                    "    const percentage = (value / maxValue) * 100;",
+                                    "    const color = colors[colorIndex % colors.length];",
+                                    "    chart += `",
+                                    "      <div style='margin-bottom: 10px;'>",
+                                    "        <div style='display: flex; justify-content: space-between; margin-bottom: 5px;'>",
+                                    "          <span style='font-weight: bold;'>${key}</span>",
+                                    "          <span style='color: #666;'>${value}</span>",
+                                    "        </div>",
+                                    "        <div style='background: #ecf0f1; border-radius: 4px; overflow: hidden;'>",
+                                    "          <div style='background: ${color}; height: 20px; width: ${percentage}%; transition: width 0.3s ease;'></div>",
+                                    "        </div>",
+                                    "      </div>",
+                                    "    `;",
+                                    "    colorIndex++;",
+                                    "  }",
+                                    "  return chart;",
+                                    "}",
+                                    "",
+                                    "// Generate charts",
+                                    "const statusChart = createBarChart(response.status_distribution);",
+                                    "const userChart = createBarChart(response.deliveries_by_user);",
+                                    "const destinationsChart = createBarChart(response.top_destinations);",
+                                    "",
+                                    "// Replace template variables",
+                                    "let html = template",
+                                    "  .replace('{{total_deliveries}}', response.total_deliveries || 0)",
+                                    "  .replace('{{total_weight}}', response.total_weight || 0)",
+                                    "  .replace('{{average_weight}}', response.average_weight || 0)",
+                                    "  .replace('{{status_chart}}', statusChart)",
+                                    "  .replace('{{user_chart}}', userChart)",
+                                    "  .replace('{{destinations_chart}}', destinationsChart)",
+                                    "  .replace('{{light_weight}}', response.weight_ranges?.light || 0)",
+                                    "  .replace('{{medium_weight}}', response.weight_ranges?.medium || 0)",
+                                    "  .replace('{{heavy_weight}}', response.weight_ranges?.heavy || 0);",
+                                    "",
+                                    "// Set the visualizer",
+                                    "pm.visualizer.set(html);"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/deliveries/analytics",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "deliveries",
+                                "analytics"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "📋 Delivery Operations",
+            "item": [
+                {
+                    "name": "Get All Deliveries (Enhanced)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "// Parse response",
+                                    "const response = pm.response.json();",
+                                    "",
+                                    "// Create delivery list visualization",
+                                    "const template = `",
+                                    "<div style='font-family: Arial, sans-serif; padding: 20px; background: #f8f9fa;'>",
+                                    "  <h1 style='color: #2c3e50; text-align: center; margin-bottom: 30px;'>📦 Delivery List</h1>",
+                                    "  ",
+                                    "  <div style='background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 20px;'>",
+                                    "    <h3 style='color: #34495e; margin-top: 0;'>Summary</h3>",
+                                    "    <div style='display: flex; gap: 30px;'>",
+                                    "      <div><strong>Total Deliveries:</strong> {{total_count}}</div>",
+                                    "      <div><strong>Total Weight:</strong> {{total_weight}} kg</div>",
+                                    "    </div>",
+                                    "  </div>",
+                                    "",
+                                    "  <div style='background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden;'>",
+                                    "    <table style='width: 100%; border-collapse: collapse;'>",
+                                    "      <thead style='background: #34495e; color: white;'>",
+                                    "        <tr>",
+                                    "          <th style='padding: 12px; text-align: left;'>ID</th>",
+                                    "          <th style='padding: 12px; text-align: left;'>User</th>",
+                                    "          <th style='padding: 12px; text-align: left;'>Destination</th>",
+                                    "          <th style='padding: 12px; text-align: left;'>Weight</th>",
+                                    "          <th style='padding: 12px; text-align: left;'>Status</th>",
+                                    "          <th style='padding: 12px; text-align: left;'>Items</th>",
+                                    "        </tr>",
+                                    "      </thead>",
+                                    "      <tbody>",
+                                    "        {{delivery_rows}}",
+                                    "      </tbody>",
+                                    "    </table>",
+                                    "  </div>",
+                                    "</div>",
+                                    "`;",
+                                    "",
+                                    "// Generate delivery rows",
+                                    "let deliveryRows = '';",
+                                    "response.deliveries.forEach((delivery, index) => {",
+                                    "  const rowColor = index % 2 === 0 ? '#f8f9fa' : 'white';",
+                                    "  const statusColor = delivery.status === 'delivered' ? '#27ae60' : ",
+                                    "                     delivery.status === 'in_transit' ? '#f39c12' : '#95a5a6';",
+                                    "  ",
+                                    "  const itemsList = delivery.items.map(item => `${item.name} (${item.quantity})`).join(', ') || 'No items';",
+                                    "  ",
+                                    "  deliveryRows += `",
+                                    "    <tr style='background: ${rowColor};'>",
+                                    "      <td style='padding: 12px; border-bottom: 1px solid #dee2e6;'>#${delivery.id}</td>",
+                                    "      <td style='padding: 12px; border-bottom: 1px solid #dee2e6;'>${delivery.user.name}</td>",
+                                    "      <td style='padding: 12px; border-bottom: 1px solid #dee2e6;'>${delivery.destination || 'Not specified'}</td>",
+                                    "      <td style='padding: 12px; border-bottom: 1px solid #dee2e6;'>${delivery.weight} kg</td>",
+                                    "      <td style='padding: 12px; border-bottom: 1px solid #dee2e6;'>",
+                                    "        <span style='background: ${statusColor}; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px;'>",
+                                    "          ${delivery.status || 'pending'}",
+                                    "        </span>",
+                                    "      </td>",
+                                    "      <td style='padding: 12px; border-bottom: 1px solid #dee2e6;'>${itemsList}</td>",
+                                    "    </tr>",
+                                    "  `;",
+                                    "});",
+                                    "",
+                                    "// Replace template variables",
+                                    "const html = template",
+                                    "  .replace('{{total_count}}', response.total_count)",
+                                    "  .replace('{{total_weight}}', response.summary.total_weight)",
+                                    "  .replace('{{delivery_rows}}', deliveryRows);",
+                                    "",
+                                    "// Set the visualizer",
+                                    "pm.visualizer.set(html);"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/deliveries",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "deliveries"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Single Delivery (Detailed)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "// Parse response",
+                                    "const delivery = pm.response.json();",
+                                    "",
+                                    "// Create detailed delivery visualization",
+                                    "const template = `",
+                                    "<div style='font-family: Arial, sans-serif; padding: 20px; background: #f8f9fa;'>",
+                                    "  <h1 style='color: #2c3e50; text-align: center; margin-bottom: 30px;'>📦 Delivery #{{delivery_id}} Details</h1>",
+                                    "  ",
+                                    "  <div style='display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;'>",
+                                    "    <div style='background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);'>",
+                                    "      <h3 style='color: #34495e; margin-top: 0;'>👤 Customer Information</h3>",
+                                    "      <p><strong>Name:</strong> {{user_name}}</p>",
+                                    "      <p><strong>Email:</strong> {{user_email}}</p>",
+                                    "      <p><strong>User ID:</strong> #{{user_id}}</p>",
+                                    "    </div>",
+                                    "    <div style='background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);'>",
+                                    "      <h3 style='color: #34495e; margin-top: 0;'>📋 Delivery Info</h3>",
+                                    "      <p><strong>Weight:</strong> {{weight}} kg</p>",
+                                    "      <p><strong>Status:</strong> <span style='background: {{status_color}}; color: white; padding: 4px 8px; border-radius: 4px;'>{{status}}</span></p>",
+                                    "      <p><strong>Destination:</strong> {{destination}}</p>",
+                                    "    </div>",
+                                    "  </div>",
+                                    "",
+                                    "  <div style='background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 20px;'>",
+                                    "    <h3 style='color: #34495e; margin-top: 0;'>📦 Items</h3>",
+                                    "    {{items_list}}",
+                                    "  </div>",
+                                    "",
+                                    "  <div style='background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);'>",
+                                    "    <h3 style='color: #34495e; margin-top: 0;'>🗺️ Route & Locations</h3>",
+                                    "    {{locations_list}}",
+                                    "  </div>",
+                                    "",
+                                    "  <div style='background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-top: 20px;'>",
+                                    "    <h3 style='color: #34495e; margin-top: 0;'>⏰ Timestamps</h3>",
+                                    "    <p><strong>Created:</strong> {{created_at}}</p>",
+                                    "    <p><strong>Last Updated:</strong> {{updated_at}}</p>",
+                                    "  </div>",
+                                    "</div>",
+                                    "`;",
+                                    "",
+                                    "// Generate items list",
+                                    "let itemsList = '';",
+                                    "if (delivery.items && delivery.items.length > 0) {",
+                                    "  delivery.items.forEach(item => {",
+                                    "    itemsList += `",
+                                    "      <div style='background: #ecf0f1; padding: 10px; margin-bottom: 10px; border-radius: 4px; display: flex; justify-content: space-between;'>",
+                                    "        <span><strong>${item.name}</strong></span>",
+                                    "        <span>Quantity: ${item.quantity}</span>",
+                                    "      </div>",
+                                    "    `;",
+                                    "  });",
+                                    "} else {",
+                                    "  itemsList = '<p style=\"color: #95a5a6;\">No items specified for this delivery.</p>';",
+                                    "}",
+                                    "",
+                                    "// Generate locations list",
+                                    "let locationsList = '';",
+                                    "if (delivery.locations && delivery.locations.length > 0) {",
+                                    "  delivery.locations.forEach(loc => {",
+                                    "    locationsList += `",
+                                    "      <div style='background: #ecf0f1; padding: 15px; margin-bottom: 10px; border-radius: 4px; border-left: 4px solid #3498db;'>",
+                                    "        <div style='display: flex; justify-content: space-between; margin-bottom: 5px;'>",
+                                    "          <strong>Stop #${loc.stop_order}</strong>",
+                                    "          <span style='background: #3498db; color: white; padding: 2px 6px; border-radius: 3px; font-size: 12px;'>Location #${loc.location.id}</span>",
+                                    "        </div>",
+                                    "        <p style='margin: 5px 0;'><strong>Address:</strong> ${loc.location.address}</p>",
+                                    "        <p style='margin: 5px 0;'><strong>City:</strong> ${loc.location.city}, ${loc.location.state} ${loc.location.zip_code}</p>",
+                                    "      </div>",
+                                    "    `;",
+                                    "  });",
+                                    "} else {",
+                                    "  locationsList = '<p style=\"color: #95a5a6;\">No specific route locations defined.</p>';",
+                                    "}",
+                                    "",
+                                    "// Determine status color",
+                                    "const statusColor = delivery.status === 'delivered' ? '#27ae60' : ",
+                                    "                   delivery.status === 'in_transit' ? '#f39c12' : '#95a5a6';",
+                                    "",
+                                    "// Replace template variables",
+                                    "const html = template",
+                                    "  .replace('{{delivery_id}}', delivery.id)",
+                                    "  .replace('{{user_name}}', delivery.user.name)",
+                                    "  .replace('{{user_email}}', delivery.user.email)",
+                                    "  .replace('{{user_id}}', delivery.user.id)",
+                                    "  .replace('{{weight}}', delivery.weight)",
+                                    "  .replace('{{status}}', delivery.status || 'pending')",
+                                    "  .replace('{{status_color}}', statusColor)",
+                                    "  .replace('{{destination}}', delivery.destination || 'Not specified')",
+                                    "  .replace('{{items_list}}', itemsList)",
+                                    "  .replace('{{locations_list}}', locationsList)",
+                                    "  .replace('{{created_at}}', new Date(delivery.created_at).toLocaleString())",
+                                    "  .replace('{{updated_at}}', new Date(delivery.updated_at).toLocaleString());",
+                                    "",
+                                    "// Set the visualizer",
+                                    "pm.visualizer.set(html);"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/deliveries/1",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "deliveries",
+                                "1"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create New Delivery",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"delivery\": {\n    \"weight\": 25.5,\n    \"status\": \"pending\",\n    \"destination\": \"123 Main St, City, State\",\n    \"user_id\": 1\n  }\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/deliveries",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "deliveries"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "🧪 Test Data Creation",
+            "item": [
+                {
+                    "name": "Create Sample Deliveries with Items",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "// Create multiple sample deliveries for testing visualization",
+                                    "const sampleDeliveries = [",
+                                    "  {",
+                                    "    \"delivery\": {",
+                                    "      \"weight\": 15.2,",
+                                    "      \"status\": \"pending\",",
+                                    "      \"destination\": \"123 Main St, New York, NY\",",
+                                    "      \"user_id\": 1",
+                                    "    }",
+                                    "  },",
+                                    "  {",
+                                    "    \"delivery\": {",
+                                    "      \"weight\": 45.7,",
+                                    "      \"status\": \"in_transit\",",
+                                    "      \"destination\": \"456 Oak Ave, Los Angeles, CA\",",
+                                    "      \"user_id\": 2",
+                                    "    }",
+                                    "  },",
+                                    "  {",
+                                    "    \"delivery\": {",
+                                    "      \"weight\": 8.3,",
+                                    "      \"status\": \"delivered\",",
+                                    "      \"destination\": \"789 Pine Rd, Chicago, IL\",",
+                                    "      \"user_id\": 3",
+                                    "    }",
+                                    "  },",
+                                    "  {",
+                                    "    \"delivery\": {",
+                                    "      \"weight\": 67.9,",
+                                    "      \"status\": \"pending\",",
+                                    "      \"destination\": \"321 Elm St, Houston, TX\",",
+                                    "      \"user_id\": 1",
+                                    "    }",
+                                    "  },",
+                                    "  {",
+                                    "    \"delivery\": {",
+                                    "      \"weight\": 22.1,",
+                                    "      \"status\": \"delivered\",",
+                                    "      \"destination\": \"654 Maple Dr, Phoenix, AZ\",",
+                                    "      \"user_id\": 4",
+                                    "    }",
+                                    "  }",
+                                    "];",
+                                    "",
+                                    "console.log('Sample deliveries created for testing. Use the individual \"Create New Delivery\" request to add these manually.');"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/up",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "up"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        }
+    ]
+}
