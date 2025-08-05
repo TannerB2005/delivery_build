@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   resources :deliveries do
     collection do
       get :analytics
+      get 'user/:user_id', to: 'deliveries#by_user', as: :by_user
     end
   end
   

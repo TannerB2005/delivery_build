@@ -1,6 +1,9 @@
 class DeliveriesController < ApplicationController
   def index
-    deliveries = Delivery.includes(:user, :items, delivery_locations: :location).all
+    # Filter by user_id if provided
+    deliveries = Delivery.includes(:user, :items, delivery_locations: :location)
+    deliveries = deliveries.where(user_id: params[:user_id]) if params[:user_id].present?
+    deliveries = deliveries.all
     
     # Enhanced JSON structure for better visualization
     deliveries_data = deliveries.map do |delivery|
@@ -47,6 +50,63 @@ class DeliveriesController < ApplicationController
         deliveries_by_user: deliveries.joins(:user).group('users.name').count
       }
     }
+  end
+
+  def by_user
+    user = User.find(params[:user_id])
+    deliveries = user.deliveries.includes(:user, :items, delivery_locations: :location)
+    
+    # Enhanced JSON structure for better visualization
+    deliveries_data = deliveries.map do |delivery|
+      {
+        id: delivery.id,
+        user: {
+          id: delivery.user.id,
+          name: delivery.user.name,
+          email: delivery.user.email
+        },
+        weight: delivery.weight,
+        status: delivery.status,
+        destination: delivery.destination,
+        created_at: delivery.created_at,
+        updated_at: delivery.updated_at,
+        items: delivery.items.map do |item|
+          {
+            id: item.id,
+            name: item.name,
+            quantity: item.quantity
+          }
+        end,
+        locations: delivery.delivery_locations.map do |dl|
+          {
+            stop_order: dl.stop_order,
+            location: {
+              id: dl.location.id,
+              address: dl.location.address,
+              city: dl.location.city,
+              state: dl.location.state,
+              zip_code: dl.location.zip_code
+            }
+          }
+        end.sort_by { |loc| loc[:stop_order] }
+      }
+    end
+    
+    render json: {
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email
+      },
+      deliveries: deliveries_data,
+      total_count: deliveries.count,
+      summary: {
+        total_weight: deliveries.sum(:weight),
+        status_breakdown: deliveries.group(:status).count
+      }
+    }
+  rescue ActiveRecord::RecordNotFound
+    render json: { error: "User not found" }, status: :not_found
   end
 
   def show
