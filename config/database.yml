@@ -22,13 +22,19 @@ test:
 
 
 production:
-  <<: *default
-  adapter: postgresql
-  url: <%= ENV['DATABASE_URL'] %>
-  database: delivery_build_production
-  username: delivery_build
-  password: <%= ENV['DATABASE_PASSWORD'] %>
+  primary:
+    <<: *default
+    adapter: postgresql
+    url: <%= ENV['DATABASE_URL'] %>
+    database: delivery_build_production
+    username: delivery_build
+    password: <%= ENV['DATABASE_PASSWORD'] %>
   cache:
+    <<: *default
+    database: storage/cache.sqlite3
+  cable:
+    <<: *default
+    database: storage/cable.sqlite3
     <<: *default
     database: storage/production_cache.sqlite3
     migrations_paths: db/cache_migrate
