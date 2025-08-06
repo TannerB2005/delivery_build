@@ -7,24 +7,23 @@ class ApplicationController < ActionController::API
   private
 
   def handle_not_found(exception)
-    render json: { 
+    render json: {
       error: "Resource not found",
-      message: exception.message 
+      message: exception.message
     }, status: :not_found
   end
 
   def handle_parameter_missing(exception)
-    render json: { 
+    render json: {
       error: "Missing required parameter",
-      message: exception.message 
+      message: exception.message
     }, status: :bad_request
   end
 
   def handle_internal_error(exception)
     Rails.logger.error "Internal Error: #{exception.message}"
     Rails.logger.error exception.backtrace.join("\n")
-    
-    render json: { 
+    render json: {
       error: "Internal server error",
       message: Rails.env.development? ? exception.message : "Something went wrong"
     }, status: :internal_server_error

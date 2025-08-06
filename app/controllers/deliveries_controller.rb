@@ -4,7 +4,6 @@ class DeliveriesController < ApplicationController
     deliveries = Delivery.includes(:user, :items, delivery_locations: :location)
     deliveries = deliveries.where(user_id: params[:user_id]) if params[:user_id].present?
     deliveries = deliveries.all
-    
     # Enhanced JSON structure for better visualization
     deliveries_data = deliveries.map do |delivery|
       {
@@ -106,7 +105,7 @@ class DeliveriesController < ApplicationController
       }
     }
   rescue ActiveRecord::RecordNotFound
-    render json: { error: "User not found" }, status: :not_found
+    render json: { error: 'User not found' }, status: :not_found
   end
 
   def show
@@ -154,7 +153,7 @@ class DeliveriesController < ApplicationController
     
     # Set default status if not provided
     delivery_attrs = delivery_params
-    delivery_attrs[:status] ||= 'pending'
+    delivery_attrs[:status] ||= "pending"
     
     delivery = Delivery.new(delivery_attrs)
 
@@ -235,19 +234,19 @@ class DeliveriesController < ApplicationController
 
         render json: { 
           delivery: delivery_data,
-          message: "Delivery created successfully"
+          message: 'Delivery created successfully'
         }, status: :created
       else
         render json: { 
           errors: delivery.errors.full_messages,
-          message: "Failed to create delivery"
+          message: 'Failed to create delivery'
         }, status: :unprocessable_entity
       end
     end
   rescue ActiveRecord::RecordInvalid => e
     render json: { 
       errors: [e.message],
-      message: "Failed to create delivery"
+      message: 'Failed to create delivery'
     }, status: :unprocessable_entity
   end
 
@@ -276,12 +275,12 @@ class DeliveriesController < ApplicationController
 
   def delivery_params
     params.require(:delivery).permit(
-      :weight, 
-      :status, 
-      :destination, 
+      :weight,
+      :status,
+      :destination,
       :user_id,
-      items: [:name, :quantity],
-      locations: [:address, :city, :state, :zip_code]
+      items: [ :name, :quantity ],
+      locations: [ :address, :city, :state, :zip_code ]
     )
   end
 end

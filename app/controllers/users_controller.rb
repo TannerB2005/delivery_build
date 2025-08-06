@@ -1,11 +1,8 @@
 class UsersController < ApplicationController
-
-  def index 
+  def index
     users = User.all
-    
     # Efficient query for delivery counts
     delivery_counts = Delivery.group(:user_id).count
-    
     # For frontend dropdowns, we don't need delivery data - just user info
     users_data = users.map do |user|
       {
@@ -49,7 +46,7 @@ class UsersController < ApplicationController
     
     render json: user_data
   rescue ActiveRecord::RecordNotFound
-    render json: { error: "User not found" }, status: :not_found
+    render json: { error: 'User not found' }, status: :not_found
   end
 
   def create
@@ -63,12 +60,12 @@ class UsersController < ApplicationController
           email: user.email,
           created_at: user.created_at
         },
-        message: "User created successfully"
+        message: 'User created successfully'
       }, status: :created
     else
       render json: { 
         errors: user.errors.full_messages,
-        message: "Failed to create user"
+        message: 'Failed to create user'
       }, status: :unprocessable_entity
     end
   end
