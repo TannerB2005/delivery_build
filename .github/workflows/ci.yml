@@ -58,9 +58,12 @@ jobs:
         with:
           ruby-version: .ruby-version
           bundler-cache: true
+- name: Prepare test database
+  env:
+    RAILS_ENV: test
+  run: bin/rails db:test:prepare
 
-      - name: Run tests
-        env:
-          RAILS_ENV: test
-          # REDIS_URL: redis://localhost:6379/0
-        run: bin/rails db:test:prepare test
+- name: Run tests
+  env:
+    RAILS_ENV: test
+  run: bin/rails test
