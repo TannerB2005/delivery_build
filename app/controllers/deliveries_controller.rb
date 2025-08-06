@@ -39,14 +39,14 @@ class DeliveriesController < ApplicationController
         end.sort_by { |loc| loc[:stop_order] }
       }
     end
-    
+
     render json: {
       deliveries: deliveries_data,
       total_count: deliveries.count,
       summary: {
         total_weight: deliveries.sum(:weight),
         status_breakdown: deliveries.group(:status).count,
-        deliveries_by_user: deliveries.joins(:user).group('users.name').count
+        deliveries_by_user: deliveries.joins(:user).group("users.name").count
       }
     }
   end
@@ -54,7 +54,7 @@ class DeliveriesController < ApplicationController
   def by_user
     user = User.find(params[:user_id])
     deliveries = user.deliveries.includes(:user, :items, delivery_locations: :location)
-    
+
     # Enhanced JSON structure for better visualization
     deliveries_data = deliveries.map do |delivery|
       {
@@ -90,7 +90,7 @@ class DeliveriesController < ApplicationController
         end.sort_by { |loc| loc[:stop_order] }
       }
     end
-    
+
     render json: {
       user: {
         id: user.id,
@@ -105,12 +105,12 @@ class DeliveriesController < ApplicationController
       }
     }
   rescue ActiveRecord::RecordNotFound
-    render json: { error: 'User not found' }, status: :not_found
+    render json: { error: "User not found" }, status: :not_found
   end
 
   def show
     delivery = Delivery.includes(:user, :items, delivery_locations: :location).find(params[:id])
-    
+
     delivery_data = {
       id: delivery.id,
       user: {
@@ -143,18 +143,18 @@ class DeliveriesController < ApplicationController
         }
       end
     }
-    
+
     render json: delivery_data
   end
 
   def create
     # Extract item from params before creating delivery
     item_name = params[:delivery].delete(:item)
-    
+
     # Set default status if not provided
     delivery_attrs = delivery_params
     delivery_attrs[:status] ||= "pending"
-    
+
     delivery = Delivery.new(delivery_attrs)
 
     # Use a database transaction to ensure data consistency
@@ -232,42 +232,42 @@ class DeliveriesController < ApplicationController
           end
         }
 
-        render json: { 
+        render json: {
           delivery: delivery_data,
-          message: 'Delivery created successfully'
+          message: "Delivery created successfully"
         }, status: :created
       else
-        render json: { 
+        render json: {
           errors: delivery.errors.full_messages,
-          message: 'Failed to create delivery'
+          message: "Failed to create delivery"
         }, status: :unprocessable_entity
       end
     end
   rescue ActiveRecord::RecordInvalid => e
-    render json: { 
-      errors: [e.message],
-      message: 'Failed to create delivery'
+    render json: {
+      errors: [ e.message ],
+      message: "Failed to create delivery"
     }, status: :unprocessable_entity
   end
 
   def analytics
     deliveries = Delivery.includes(:user, :items)
-    
+
     analytics_data = {
       total_deliveries: deliveries.count,
       total_weight: deliveries.sum(:weight),
       average_weight: deliveries.average(:weight)&.round(2),
       status_distribution: deliveries.group(:status).count,
-      deliveries_by_user: deliveries.joins(:user).group('users.name').count,
+      deliveries_by_user: deliveries.joins(:user).group("users.name").count,
       deliveries_by_date: deliveries.group_by_day(:created_at).count,
       top_destinations: deliveries.group(:destination).count.sort_by { |k, v| -v }.first(5).to_h,
       weight_ranges: {
-        light: deliveries.where('weight < 10').count,
-        medium: deliveries.where('weight >= 10 AND weight < 50').count,
-        heavy: deliveries.where('weight >= 50').count
+        light: deliveries.where("weight < 10").count,
+        medium: deliveries.where("weight >= 10 AND weight < 50").count,
+        heavy: deliveries.where("weight >= 50").count
       }
     }
-    
+
     render json: analytics_data
   end
 

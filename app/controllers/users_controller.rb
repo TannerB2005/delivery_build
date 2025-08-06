@@ -12,7 +12,7 @@ class UsersController < ApplicationController
         delivery_count: delivery_counts[user.id] || 0
       }
     end
-    
+
     render json: {
       users: users_data,
       total_count: users.count
@@ -21,7 +21,7 @@ class UsersController < ApplicationController
 
   def show
     user = User.includes(:deliveries).find(params[:id])
-    
+
     user_data = {
       id: user.id,
       name: user.name,
@@ -43,10 +43,10 @@ class UsersController < ApplicationController
         status_breakdown: user.deliveries.group(:status).count
       }
     }
-    
+
     render json: user_data
   rescue ActiveRecord::RecordNotFound
-    render json: { error: 'User not found' }, status: :not_found
+    render json: { error: "User not found" }, status: :not_found
   end
 
   def create
@@ -60,12 +60,12 @@ class UsersController < ApplicationController
           email: user.email,
           created_at: user.created_at
         },
-        message: 'User created successfully'
+        message: "User created successfully"
       }, status: :created
     else
-      render json: { 
+      render json: {
         errors: user.errors.full_messages,
-        message: 'Failed to create user'
+        message: "Failed to create user"
       }, status: :unprocessable_entity
     end
   end

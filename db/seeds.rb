@@ -34,7 +34,7 @@ puts "Created #{locations.count} locations"
 
 # Create Deliveries with varied data for better visualization
 puts "Creating deliveries..."
-delivery_statuses = ["pending", "in_transit", "delivered", "cancelled"]
+delivery_statuses = [ "pending", "in_transit", "delivered", "cancelled" ]
 destinations = [
   "Downtown Distribution Center",
   "Suburban Mall",
@@ -58,8 +58,8 @@ destinations = [
   # Add 1-4 items per delivery
   item_count = rand(1..4)
   item_names = [
-    "Electronics Package", "Clothing Items", "Books", "Home Appliances", 
-    "Sports Equipment", "Food Items", "Documents", "Furniture", 
+    "Electronics Package", "Clothing Items", "Books", "Home Appliances",
+    "Sports Equipment", "Food Items", "Documents", "Furniture",
     "Art Supplies", "Medical Supplies", "Tools", "Toys"
   ]
 
@@ -101,5 +101,3 @@ puts "  - Light (<10kg): #{Delivery.where('weight < 10').count}"
 puts "  - Medium (10-50kg): #{Delivery.where('weight >= 10 AND weight < 50').count}"
 puts "  - Heavy (>50kg): #{Delivery.where('weight >= 50').count}"
 puts "- By User: #{Delivery.joins(:user).group('users.name').count}"
-
-
