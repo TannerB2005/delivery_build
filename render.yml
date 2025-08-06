@@ -1,0 +1,24 @@
+databases:
+  - name: delivery_build_db
+    databaseName: delivery_build_production
+    user: delivery_build
+    plan: free
+
+services:
+  - type: web
+    name: delivery_build
+    runtime: ruby
+    plan: free
+    buildCommand: bundle install && bundle exec rake db:migrate
+    startCommand: bundle exec rails s
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: delivery_build_db
+          property: connectionString
+      - key: RAILS_MASTER_KEY
+        sync: false
+      - key: RACK_ENV
+        value: production
+      - key: RAILS_ENV
+        value: production
