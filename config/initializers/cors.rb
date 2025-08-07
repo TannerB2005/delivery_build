@@ -7,7 +7,9 @@
 
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
-    origins "http://localhost:4200"  # your Angular app
+    origins "http://localhost:4200",
+    "https://delivery-front-five.vercel.app/"
+    ""# your Angular app
 
     resource "*",
       headers: :any,
