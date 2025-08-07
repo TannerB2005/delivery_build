@@ -2,7 +2,10 @@ class DeliveriesController < ApplicationController
   def index
     # Filter by user_id if provided
     deliveries = Delivery.includes(:user, :items, delivery_locations: :location)
-    deliveries = deliveries.where(user_id: params[:user_id]) if params[:user_id].present?
+    deliveries = deliveries.where(user_id: params[:user_id]) if pa    render json: {
+      errors: [ e.message ],
+      message: "Failed to create delivery"
+    }, status: :unprocessable_entity[:user_id].present?
     deliveries = deliveries.all
     # Enhanced JSON structure for better visualization
     deliveries_data = deliveries.map do |delivery|
@@ -279,7 +282,7 @@ class DeliveriesController < ApplicationController
       :status,
       :destination,
       :user_id,
-      items: [ :name, :quantity ],
+        items: [ :name, :quantity ],
       locations: [ :address, :city, :state, :zip_code ]
     )
   end
