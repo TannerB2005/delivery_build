@@ -1,0 +1,239 @@
+{
+    "info": {
+        "name": "Delivery & Users API",
+        "_postman_id": "delivery-users-api-001",
+        "description": "CRUD + analytics for Deliveries and Users",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http://localhost:3000"
+        },
+        {
+            "key": "delivery_id",
+            "value": "1"
+        },
+        {
+            "key": "user_id",
+            "value": "1"
+        }
+    ],
+    "item": [
+        {
+            "name": "Health",
+            "item": [
+                {
+                    "name": "API Health",
+                    "request": {
+                        "method": "GET",
+                        "url": "{{base_url}}/api/health"
+                    }
+                },
+                {
+                    "name": "Up",
+                    "request": {
+                        "method": "GET",
+                        "url": "{{base_url}}/up"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Users",
+            "item": [
+                {
+                    "name": "List Users",
+                    "request": {
+                        "method": "GET",
+                        "url": "{{base_url}}/users",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "Get User",
+                    "request": {
+                        "method": "GET",
+                        "url": "{{base_url}}/users/{{user_id}}"
+                    }
+                },
+                {
+                    "name": "Create User",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"user\": {\n    \"name\": \"Alice Example\",\n    \"email\": \"alice@example.com\"\n  }\n}"
+                        },
+                        "url": "{{base_url}}/users"
+                    }
+                },
+                {
+                    "name": "Update User",
+                    "request": {
+                        "method": "PATCH",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"user\": {\n    \"name\": \"Alice Updated\",\n    \"email\": \"alice.updated@example.com\"\n  }\n}"
+                        },
+                        "url": "{{base_url}}/users/{{user_id}}"
+                    }
+                },
+                {
+                    "name": "Delete User",
+                    "request": {
+                        "method": "DELETE",
+                        "url": "{{base_url}}/users/{{user_id}}"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Deliveries",
+            "item": [
+                {
+                    "name": "List Deliveries",
+                    "request": {
+                        "method": "GET",
+                        "url": "{{base_url}}/deliveries"
+                    }
+                },
+                {
+                    "name": "List Deliveries (Filter by User)",
+                    "request": {
+                        "method": "GET",
+                        "url": "{{base_url}}/deliveries?user_id={{user_id}}"
+                    }
+                },
+                {
+                    "name": "Deliveries By User (Explicit Route)",
+                    "request": {
+                        "method": "GET",
+                        "url": "{{base_url}}/deliveries/user/{{user_id}}"
+                    }
+                },
+                {
+                    "name": "Get Delivery",
+                    "request": {
+                        "method": "GET",
+                        "url": "{{base_url}}/deliveries/{{delivery_id}}"
+                    }
+                },
+                {
+                    "name": "Create Delivery (Basic)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"delivery\": {\n    \"user_id\": {{user_id}},\n    \"weight\": 12.5,\n    \"status\": \"pending\",\n    \"destination\": \"123 Main St\"\n  }\n}"
+                        },
+                        "url": "{{base_url}}/deliveries"
+                    }
+                },
+                {
+                    "name": "Create Delivery (With Items & Locations)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"delivery\": {\n    \"user_id\": {{user_id}},\n    \"weight\": 48.9,\n    \"status\": \"in_transit\",\n    \"destination\": \"456 Warehouse Blvd\",\n    \"items\": [\n      { \"name\": \"Widget A\", \"quantity\": 10 },\n      { \"name\": \"Widget B\", \"quantity\": 4 }\n    ],\n    \"locations\": [\n      {\"address\": \"111 First Stop Rd\", \"city\": \"Denver\", \"state\": \"CO\", \"zip_code\": \"80201\"},\n      {\"address\": \"222 Second Stop Rd\", \"city\": \"Boulder\", \"state\": \"CO\", \"zip_code\": \"80301\"}\n    ]\n  }\n}"
+                        },
+                        "url": "{{base_url}}/deliveries"
+                    }
+                },
+                {
+                    "name": "Update Delivery (Partial)",
+                    "request": {
+                        "method": "PATCH",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"delivery\": {\n    \"status\": \"delivered\",\n    \"destination\": \"789 Final Ave\"\n  }\n}"
+                        },
+                        "url": "{{base_url}}/deliveries/{{delivery_id}}"
+                    }
+                },
+                {
+                    "name": "Delete Delivery",
+                    "request": {
+                        "method": "DELETE",
+                        "url": "{{base_url}}/deliveries/{{delivery_id}}"
+                    }
+                },
+                {
+                    "name": "Analytics",
+                    "request": {
+                        "method": "GET",
+                        "url": "{{base_url}}/deliveries/analytics"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Samples / Utilities",
+            "item": [
+                {
+                    "name": "Create Multiple Sample Deliveries (Manual Loop Instruction)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"delivery\": {\n    \"user_id\": {{user_id}},\n    \"weight\": 5.5,\n    \"status\": \"pending\",\n    \"destination\": \"Sample Destination\"\n  }\n}"
+                        },
+                        "url": "{{base_url}}/deliveries"
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "// You can duplicate this request and adjust values to quickly seed data."
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

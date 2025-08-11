@@ -2,10 +2,7 @@ class DeliveriesController < ApplicationController
   def index
     # Filter by user_id if provided
     deliveries = Delivery.includes(:user, :items, delivery_locations: :location)
-    deliveries = deliveries.where(user_id: params[:user_id]) if pa    render json: {
-      errors: [ e.message ],
-      message: "Failed to create delivery"
-    }, status: :unprocessable_entity[:user_id].present?
+    deliveries = deliveries.where(user_id: params[:user_id]) if params[:user_id].present?
     deliveries = deliveries.all
     # Enhanced JSON structure for better visualization
     deliveries_data = deliveries.map do |delivery|
@@ -251,6 +248,73 @@ class DeliveriesController < ApplicationController
       errors: [ e.message ],
       message: "Failed to create delivery"
     }, status: :unprocessable_entity
+  end
+
+  def update
+    delivery = Delivery.find(params[:id])
+    
+    if delivery.update(delivery_params)
+      # Return the same format as show for consistency
+      delivery_data = {
+        id: delivery.id,
+        user: {
+          id: delivery.user.id,
+          name: delivery.user.name,
+          email: delivery.user.email
+        },
+        weight: delivery.weight,
+        status: delivery.status,
+        destination: delivery.destination,
+        created_at: delivery.created_at,
+        updated_at: delivery.updated_at,
+        items: delivery.items.map do |item|
+          {
+            id: item.id,
+            name: item.name,
+            quantity: item.quantity
+          }
+        end,
+        locations: delivery.delivery_locations.includes(:location).order(:stop_order).map do |dl|
+          {
+            stop_order: dl.stop_order,
+            location: {
+              id: dl.location.id,
+              address: dl.location.address,
+              city: dl.location.city,
+              state: dl.location.state,
+              zip_code: dl.location.zip_code
+            }
+          }
+        end
+      }
+      
+      render json: {
+        delivery: delivery_data,
+        message: "Delivery updated successfully"
+      }
+    else
+      render json: {
+        errors: delivery.errors.full_messages,
+        message: "Failed to update delivery"
+      }, status: :unprocessable_entity
+    end
+  rescue ActiveRecord::RecordNotFound
+    render json: { error: "Delivery not found" }, status: :not_found
+  end
+
+  def destroy
+    delivery = Delivery.find(params[:id])
+    
+    if delivery.destroy
+      render json: { message: "Delivery deleted successfully" }
+    else
+      render json: {
+        errors: delivery.errors.full_messages,
+        message: "Failed to delete delivery"
+      }, status: :unprocessable_entity
+    end
+  rescue ActiveRecord::RecordNotFound
+    render json: { error: "Delivery not found" }, status: :not_found
   end
 
   def analytics

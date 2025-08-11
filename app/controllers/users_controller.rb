@@ -49,6 +49,44 @@ class UsersController < ApplicationController
     render json: { error: "User not found" }, status: :not_found
   end
 
+  def update
+    user = User.find(params[:id])
+    
+    if user.update(user_params)
+      render json: {
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          updated_at: user.updated_at
+        },
+        message: "User updated successfully"
+      }
+    else
+      render json: {
+        errors: user.errors.full_messages,
+        message: "Failed to update user"
+      }, status: :unprocessable_entity
+    end
+  rescue ActiveRecord::RecordNotFound
+    render json: { error: "User not found" }, status: :not_found
+  end
+
+  def destroy
+    user = User.find(params[:id])
+    
+    if user.destroy
+      render json: { message: "User deleted successfully" }
+    else
+      render json: {
+        errors: user.errors.full_messages,
+        message: "Failed to delete user"
+      }, status: :unprocessable_entity
+    end
+  rescue ActiveRecord::RecordNotFound
+    render json: { error: "User not found" }, status: :not_found
+  end
+
   def create
     user = User.new(user_params)
 
