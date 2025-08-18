@@ -9,6 +9,7 @@ gem "faker"
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", ">= 5.0"
 gem "rack-cors"
+gem "bcrypt", "~> 3.1.7"
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 # gem "jbuilder"
 

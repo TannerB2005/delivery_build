@@ -14,9 +14,20 @@ users = []
 5.times do
   users << User.create!(
     name: Faker::Name.name,
-    email: Faker::Internet.unique.email
+    email: Faker::Internet.unique.email,
+    password: "password1",
+    password_confirmation: "password1"
   )
 end
+
+# Create an admin user
+User.create!(
+  name: "Admin User",
+  email: "admin@example.com",
+  password: "adminpassword",
+  password_confirmation: "adminpassword"
+)
+
 puts "Created #{users.count} users"
 
 # Create Locations
