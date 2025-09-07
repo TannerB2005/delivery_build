@@ -74,7 +74,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n  \"user\": {\n    \"name\": \"Alice Example\",\n    \"email\": \"alice@example.com\"\n  }\n}"
+                            "raw": "{\n  \"user\": {\n    \"name\": \"Alice Example\",\n    \"email\": \"alice@example.com\",\n    \"password\": \"password123\"\n  }\n}"
                         },
                         "url": "{{base_url}}/users"
                     }
@@ -232,6 +232,45 @@
                             }
                         }
                     ]
+                }
+            ]
+        },
+        {
+            "name": "Auth",
+            "item": [
+                {
+                    "name": "Login (Flat)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"adminpassword\"\n}"
+                        },
+                        "url": "{{base_url}}/login"
+                    }
+                },
+                {
+                    "name": "Login (Nested User)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"user\": {\n    \"email\": \"admin@example.com\",\n    \"password\": \"adminpassword\"\n  }\n}"
+                        },
+                        "url": "{{base_url}}/login"
+                    }
                 }
             ]
         }
