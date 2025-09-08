@@ -7,6 +7,18 @@ Rails.application.routes.draw do
     end
   end
 
+  # Authentication routes
+  post "/login", to: "sessions#create"
+  post "/promote_admin", to: "sessions#promote_admin"
+
+  # Admin routes
+  namespace :admin do
+    get :all_deliveries
+    get :all_users
+    post "users/:user_id/promote", to: "admin#promote_user"
+    post "users/:user_id/demote", to: "admin#demote_user"
+  end
+
   # API health check for frontend debugging
   get "api/health", to: proc { [ 200, { "Content-Type" => "application/json" }, [ { status: "ok", timestamp: Time.current }.to_json ] ] }
 
@@ -18,6 +30,4 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
-
-  post "/login", to: "sessions#create"
 end

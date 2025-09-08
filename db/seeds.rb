@@ -21,11 +21,21 @@ users = []
 end
 
 # Create an admin user
-User.create!(
+admin_user = User.create!(
   name: "Admin User",
   email: "admin@example.com",
   password: "adminpassword",
-  password_confirmation: "adminpassword"
+  password_confirmation: "adminpassword",
+  admin: true
+)
+
+# Create a second admin user for testing
+User.create!(
+  name: "Tanner Admin",
+  email: "tanner@example.com",
+  password: "password123",
+  password_confirmation: "password123",
+  admin: true
 )
 
 puts "Created #{users.count} users"

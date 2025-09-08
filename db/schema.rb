@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_11_232202) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_08_223908) do
   create_table "deliveries", force: :cascade do |t|
     t.integer "user_id", null: false
     t.decimal "weight"
@@ -55,6 +55,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_11_232202) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "password_digest"
+    t.boolean "admin", default: false, null: false
   end
 
   add_foreign_key "deliveries", "users"
