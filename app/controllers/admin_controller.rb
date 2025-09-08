@@ -1,10 +1,10 @@
-class AdminController < ApplicationController
+ class AdminController < ApplicationController
   before_action :require_admin
 
   def all_deliveries
     # Admin can see ALL deliveries with full details
     deliveries = Delivery.includes(:user, :items, delivery_locations: :location).all
-    
+
     deliveries_data = deliveries.map do |delivery|
       {
         id: delivery.id,
@@ -60,7 +60,7 @@ class AdminController < ApplicationController
     # Admin can see all users with admin status
     users = User.all
     delivery_counts = Delivery.group(:user_id).count
-    
+
     users_data = users.map do |user|
       {
         id: user.id,
@@ -84,7 +84,7 @@ class AdminController < ApplicationController
   def promote_user
     user = User.find(params[:user_id])
     user.make_admin!
-    
+
     render json: {
       message: "User promoted to admin successfully",
       user: {
@@ -101,7 +101,7 @@ class AdminController < ApplicationController
   def demote_user
     user = User.find(params[:user_id])
     user.remove_admin!
-    
+
     render json: {
       message: "Admin privileges removed successfully",
       user: {
@@ -120,22 +120,22 @@ class AdminController < ApplicationController
   def require_admin
     # For now, we'll check admin status from a simple header
     # In a real app, you'd verify a JWT token or session
-    user_id = request.headers['X-User-ID']
-    admin_token = request.headers['X-Admin-Token']
-    
+    user_id = request.headers["X-User-ID"]
+    admin_token = request.headers["X-Admin-Token"]
+
     if user_id.present?
       user = User.find_by(id: user_id)
       unless user&.admin?
         render json: { error: "Admin access required" }, status: :forbidden
-        return
+        nil
       end
     elsif admin_token == "admin-secret-token"
       # Allow temporary admin access with secret token for testing
-      return
+      nil
     else
-      render json: { 
-        error: "Admin access required. Include X-User-ID header with admin user ID or X-Admin-Token header." 
+      render json: {
+        error: "Admin access required. Include X-User-ID header with admin user ID or X-Admin-Token header."
       }, status: :forbidden
     end
   end
-end
+ end

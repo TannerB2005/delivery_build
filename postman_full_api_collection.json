@@ -109,6 +109,23 @@
             "name": "Deliveries",
             "item": [
                 {
+                    "name": "Dashboard (Deliveries Index)",
+                    "request": {
+                        "method": "GET",
+                        "url": "{{base_url}}/dashboard"
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "// Alias route to deliveries#index for UI dashboard integration"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
                     "name": "List Deliveries",
                     "request": {
                         "method": "GET",

@@ -148,57 +148,70 @@ class DeliveriesController < ApplicationController
   end
 
   def create
-    # Extract item from params before creating delivery
-    item_name = params[:delivery].delete(:item)
+    # Allow both nested { delivery: {...} } and flat payloads.
+    raw_delivery = params[:delivery] || params
 
-    # Set default status if not provided
-    delivery_attrs = delivery_params
-    delivery_attrs[:status] ||= "pending"
+    # Normalize to plain hash with symbol keys (handles ActionController::Parameters, string keys, mixed keys)
+    raw_hash = if raw_delivery.respond_to?(:to_unsafe_h)
+                 raw_delivery.to_unsafe_h
+    else
+                 raw_delivery.to_h rescue {}
+    end
+    normalized = raw_hash.deep_transform_keys { |k| k.to_s.underscore.to_sym }
+
+    # Extract legacy single item name (supports :item or 'item')
+    legacy_item_name = normalized.delete(:item) || normalized.delete("item")
+
+    # Pull out nested arrays before strong params (we'll whitelist manually)
+    items_payload      = normalized.delete(:items)      || []
+    locations_payload  = normalized.delete(:locations)  || []
+
+    # Build attributes via strong params when nested; fallback to normalized for flat usage
+    delivery_attrs = if params[:delivery].present?
+                       delivery_params.to_h
+    else
+                       normalized.slice(:user_id, :weight, :status, :destination)
+    end
+    delivery_attrs[:status] = (delivery_attrs[:status].presence || "pending")
 
     delivery = Delivery.new(delivery_attrs)
 
-    # Use a database transaction to ensure data consistency
     ActiveRecord::Base.transaction do
       if delivery.save
-        # Handle legacy single item parameter (for backward compatibility)
-        if item_name.present?
-          delivery.items.create!(
-            name: item_name,
-            quantity: 1
+        # Legacy single item param
+        if legacy_item_name.present?
+          delivery.items.create!(name: legacy_item_name, quantity: 1)
+        end
+
+        # Items array (each element may have string or symbol keys)
+        Array(items_payload).each do |item_hash|
+          next if item_hash.blank?
+          name = item_hash[:name] || item_hash["name"]
+          quantity = item_hash[:quantity] || item_hash["quantity"] || 1
+          next if name.blank?
+            delivery.items.create!(name: name, quantity: quantity)
+        end
+
+        # Locations array
+        Array(locations_payload).each_with_index do |loc_hash, idx|
+          next if loc_hash.blank?
+          address  = loc_hash[:address]  || loc_hash["address"]
+          city     = loc_hash[:city]     || loc_hash["city"]
+          state    = loc_hash[:state]    || loc_hash["state"]
+          zip_code = loc_hash[:zip_code] || loc_hash["zip_code"]
+          next if address.blank? || city.blank?
+
+          location = Location.find_or_create_by(
+            address: address,
+            city: city,
+            state: state,
+            zip_code: zip_code
           )
+
+          delivery.delivery_locations.create!(location: location, stop_order: idx + 1)
         end
 
-        # Create associated items if provided (new format)
-        if params[:delivery][:items].present?
-          params[:delivery][:items].each do |item_params|
-            delivery.items.create!(
-              name: item_params[:name],
-              quantity: item_params[:quantity]
-            )
-          end
-        end
-
-        # Create delivery locations if provided
-        if params[:delivery][:locations].present?
-          params[:delivery][:locations].each_with_index do |location_params, index|
-            # Find or create the location
-            location = Location.find_or_create_by(
-              address: location_params[:address],
-              city: location_params[:city],
-              state: location_params[:state],
-              zip_code: location_params[:zip_code]
-            )
-
-            # Create the delivery location with stop order
-            delivery.delivery_locations.create!(
-              location: location,
-              stop_order: index + 1
-            )
-          end
-        end
-
-        # Return the same rich data structure as show endpoint
-        delivery.reload # Reload to get associated data
+        delivery.reload
         delivery_data = {
           id: delivery.id,
           user: {
@@ -211,13 +224,7 @@ class DeliveriesController < ApplicationController
           destination: delivery.destination,
           created_at: delivery.created_at,
           updated_at: delivery.updated_at,
-          items: delivery.items.map do |item|
-            {
-              id: item.id,
-              name: item.name,
-              quantity: item.quantity
-            }
-          end,
+          items: delivery.items.map { |item| { id: item.id, name: item.name, quantity: item.quantity } },
           locations: delivery.delivery_locations.includes(:location).order(:stop_order).map do |dl|
             {
               stop_order: dl.stop_order,
@@ -232,27 +239,18 @@ class DeliveriesController < ApplicationController
           end
         }
 
-        render json: {
-          delivery: delivery_data,
-          message: "Delivery created successfully"
-        }, status: :created
+        render json: { delivery: delivery_data, message: "Delivery created successfully" }, status: :created
       else
-        render json: {
-          errors: delivery.errors.full_messages,
-          message: "Failed to create delivery"
-        }, status: :unprocessable_entity
+        render json: { errors: delivery.errors.full_messages, message: "Failed to create delivery" }, status: :unprocessable_entity
       end
     end
   rescue ActiveRecord::RecordInvalid => e
-    render json: {
-      errors: [ e.message ],
-      message: "Failed to create delivery"
-    }, status: :unprocessable_entity
+    render json: { errors: [ e.message ], message: "Failed to create delivery" }, status: :unprocessable_entity
   end
 
   def update
     delivery = Delivery.find(params[:id])
-    
+
     if delivery.update(delivery_params)
       # Return the same format as show for consistency
       delivery_data = {
@@ -287,7 +285,7 @@ class DeliveriesController < ApplicationController
           }
         end
       }
-      
+
       render json: {
         delivery: delivery_data,
         message: "Delivery updated successfully"
@@ -304,7 +302,7 @@ class DeliveriesController < ApplicationController
 
   def destroy
     delivery = Delivery.find(params[:id])
-    
+
     if delivery.destroy
       render json: { message: "Delivery deleted successfully" }
     else

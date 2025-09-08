@@ -7,6 +7,10 @@ Rails.application.routes.draw do
     end
   end
 
+  # Friendly dashboard route (alias of deliveries#index)
+  get "/dashboard", to: "deliveries#index", as: :dashboard
+  root to: "deliveries#index"
+
   # Authentication routes
   post "/login", to: "sessions#create"
   post "/promote_admin", to: "sessions#promote_admin"

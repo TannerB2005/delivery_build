@@ -51,7 +51,7 @@ class UsersController < ApplicationController
 
   def update
     user = User.find(params[:id])
-    
+
     if user.update(user_params)
       render json: {
         user: {
@@ -74,7 +74,7 @@ class UsersController < ApplicationController
 
   def destroy
     user = User.find(params[:id])
-    
+
     if user.destroy
       render json: { message: "User deleted successfully" }
     else
