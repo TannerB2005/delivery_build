@@ -1,5 +1,12 @@
 Rails.application.routes.draw do
-  resources :users
+  resources :users do
+    # Nested deliveries for a specific user context
+    resources :deliveries, only: [ :index, :create ], module: nil, controller: "deliveries" do
+      collection do
+        # /users/:user_id/deliveries/analytics (scoped) could be added later
+      end
+    end
+  end
   resources :deliveries do
     collection do
       get :analytics

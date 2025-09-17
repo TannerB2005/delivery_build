@@ -11,7 +11,7 @@ User.destroy_all
 # Create Users
 puts "Creating users..."
 users = []
-5.times do
+28.times do
   users << User.create!(
     name: Faker::Name.name,
     email: Faker::Internet.unique.email,
@@ -102,23 +102,23 @@ destinations = [
     )
   end
 end
+# Uncommenting the lines below allows for immediate reflection of code changes without needing to restart the server.
+# puts "Created #{Delivery.count} deliveries with items and routes"
 
-puts "Created #{Delivery.count} deliveries with items and routes"
+# # Print summary
+# puts "\n=== Database Seeded Successfully ==="
+# puts "Users: #{User.count}"
+# puts "Locations: #{Location.count}"
+# puts "Deliveries: #{Delivery.count}"
+# puts "Items: #{Item.count}"
+# puts "Delivery Locations: #{DeliveryLocation.count}"
+# puts "==================================="
 
-# Print summary
-puts "\n=== Database Seeded Successfully ==="
-puts "Users: #{User.count}"
-puts "Locations: #{Location.count}"
-puts "Deliveries: #{Delivery.count}"
-puts "Items: #{Item.count}"
-puts "Delivery Locations: #{DeliveryLocation.count}"
-puts "==================================="
-
-# Print some stats for visualization testing
-puts "\nDelivery Statistics for Testing:"
-puts "- By Status: #{Delivery.group(:status).count}"
-puts "- Weight Distribution:"
-puts "  - Light (<10kg): #{Delivery.where('weight < 10').count}"
-puts "  - Medium (10-50kg): #{Delivery.where('weight >= 10 AND weight < 50').count}"
-puts "  - Heavy (>50kg): #{Delivery.where('weight >= 50').count}"
-puts "- By User: #{Delivery.joins(:user).group('users.name').count}"
+# # Print some stats for visualization testing
+# puts "\nDelivery Statistics for Testing:"
+# puts "- By Status: #{Delivery.group(:status).count}"
+# puts "- Weight Distribution:"
+# puts "  - Light (<10kg): #{Delivery.where('weight < 10').count}"
+# puts "  - Medium (10-50kg): #{Delivery.where('weight >= 10 AND weight < 50').count}"
+# puts "  - Heavy (>50kg): #{Delivery.where('weight >= 50').count}"
+# puts "- By User: #{Delivery.joins(:user).group('users.name').count}"

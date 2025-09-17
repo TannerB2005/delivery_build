@@ -1,9 +1,10 @@
 class DeliveriesController < ApplicationController
   def index
-    # Filter by user_id if provided
+    # Nested route support: /users/:user_id/deliveries
     deliveries = Delivery.includes(:user, :items, delivery_locations: :location)
-    deliveries = deliveries.where(user_id: params[:user_id]) if params[:user_id].present?
-    deliveries = deliveries.all
+    if params[:user_id].present?
+      deliveries = deliveries.where(user_id: params[:user_id])
+    end
     # Enhanced JSON structure for better visualization
     deliveries_data = deliveries.map do |delivery|
       {
@@ -169,8 +170,13 @@ class DeliveriesController < ApplicationController
     # Build attributes via strong params when nested; fallback to normalized for flat usage
     delivery_attrs = if params[:delivery].present?
                        delivery_params.to_h
-    else
+                     else
                        normalized.slice(:user_id, :weight, :status, :destination)
+                     end
+
+    # If nested under /users/:user_id ensure association overrides any payload value
+    if params[:user_id].present?
+      delivery_attrs[:user_id] = params[:user_id]
     end
     delivery_attrs[:status] = (delivery_attrs[:status].presence || "pending")
 
