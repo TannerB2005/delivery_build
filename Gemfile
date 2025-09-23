@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
-gem "rails", "~> 8.0.2"
+gem "rails", "~> 8.0.3"
 # Database gems
 gem "sqlite3", ">= 2.1", groups: [ :development, :test ]
 gem "pg", ">= 1.5.4"
